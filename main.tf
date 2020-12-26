@@ -1,4 +1,10 @@
 terraform {
+  backend "s3"  {
+      bucket  = "terraform-state-satya"
+      key = "global/s3/terraform.tfstate"
+      region = "ap-south-1"
+      dynamodb_table  = "terraform-state-locking"
+      encrypt = true
   required_version = "0.11.13"
 }
 
