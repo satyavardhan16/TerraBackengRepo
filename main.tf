@@ -8,10 +8,47 @@ provider "aws" {
   shared_credentials_file = "/home/bitnami/.aws/credentials"
 }
 
-resource "aws_instance" "example" {
-  ami           = "ami-0cb0e70f44e1a4bb5"
-  instance_type = "t2.micro"
-  tags = {
-    Name = "JenkinsSatya23"
+resource "aws_s3_bucket" "terraform_state" {
+    bucket  = "terraform-state-satya"
+  
+  lifecycle {
+    prevent_destroy = true
     }
+  
+  versioning  {
+    enabled = true
+    }
+  server_side_encryption_configuration_by_default {
+    rule  {
+      apply_server_side_encryption_by_default {
+        see_algorithm = "AES256"
+        }
+      }
+    }
+  }
+
+resource "aws_dynamodb_table" "terraform_locks" {
+  name  = "terraform-state-locking"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key  = "LockID"
+  
+  attribute {
+    name  = "LockID"
+    type  = "S"
+    }
+  }
+    
+  
+  
+resource "aws_db_instance" "default" {
+  allocated_storage = 5
+  storage_type  = "gp2"
+  engine  = "mysql"
+  engine_version  = "5.7"
+  instance_class  = "db.t2.micro"
+  name  = "mydb"
+  username  = "foo"
+  password  = "foopass"
+  parameter_group_name  = "default.mysql5.7"
+  skip_final_snapshot = true
  }
