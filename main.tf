@@ -5,6 +5,7 @@ terraform {
       region = "ap-south-1"
       dynamodb_table  = "terraform-state-locking"
       encrypt = true
+    }
   required_version = "0.11.13"
 }
 
